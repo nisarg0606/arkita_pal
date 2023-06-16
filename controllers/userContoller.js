@@ -1,0 +1,63 @@
+const User = require("../models/userModel");
+
+// Create a new user
+exports.createUser = async (req, res) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+    const newUser = new User({ username, password });
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
+  } catch (error) {
+    if (error.message.startsWith("E11000")) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// login user with username and password
+exports.loginUser = async (req, res) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+    //check if username exists
+    const userExists = await User.findOne({ username });
+    if (!userExists) {
+      return res.status(404).json({ error: "Invalid username" });
+    }
+    //check if password is correct
+    const correctPassword = await User.findOne({ username, password });
+    if (!correctPassword) {
+      return res.status(404).json({ error: "Invalid password" });
+    }
+    res.status(200).json(correctPassword);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//update user password
+exports.updateUser = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { password },
+      { new: true }
+    );
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    res.json(deletedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
