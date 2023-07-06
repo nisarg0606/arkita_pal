@@ -14,6 +14,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // routes
 app.use("/blog", require("./routes/blogRoutes"));
 app.use("/user", require("./routes/userRoutes"));
+app.use("/service", require("./routes/serviceRoutes"));
 
 // connect to mongodb
 const uri = process.env.ATLAS_URI;

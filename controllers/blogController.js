@@ -10,7 +10,7 @@ exports.createBlog = async (req, res) => {
     const newBlog = new Blog({ title, content, image, imgType });
     console.log(newBlog);
     const savedBlog = await newBlog.save();
-    res.json(savedBlog);
+    res.status(201).json(savedBlog);
   } catch (error) {
     if (error.message === "Only image files are allowed") {
       return res.status(400).json({ error: error.message });
@@ -26,7 +26,7 @@ exports.createBlog = async (req, res) => {
 exports.getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find();
-    res.json(blogs);
+    res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -43,7 +43,7 @@ exports.getBlogById = async (req, res) => {
     if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
-    res.json({ blog, recentBlogs });
+    res.status(200).json({ blog, recentBlogs });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -61,7 +61,7 @@ exports.updateBlog = async (req, res) => {
     if (!updatedBlog) {
       return res.status(404).json({ error: error.message });
     }
-    res.json(updatedBlog);
+    res.status(200).json(updatedBlog);
   } catch (error) {
     if (error.message === "Only image files are allowed") {
       return res.status(400).json({ error: error.message });
@@ -77,7 +77,7 @@ exports.deleteBlog = async (req, res) => {
     if (!deletedBlog) {
       return res.status(404).json({ error: "Blog not found" });
     }
-    res.json({ message: "Blog deleted successfully" });
+    res.status(200).json({ message: "Blog deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
