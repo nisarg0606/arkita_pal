@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const blogController = require("../controllers/blogController");
 const multer = require('multer');
+const auth = require("../middleware/auth");
 
 // Set up multer storage
 const storage = multer.diskStorage({
@@ -29,7 +30,7 @@ const upload = multer({
 });
 
 // Create a new blog
-router.post('/', upload.single('image'), blogController.createBlog);
+router.post('/', auth, upload.single('image'), blogController.createBlog);
 
 // Get all blogs
 router.get('/', blogController.getAllBlogs);
@@ -38,10 +39,10 @@ router.get('/', blogController.getAllBlogs);
 router.get('/:id', blogController.getBlogById);
 
 // Update a blog by ID
-router.put('/:id', upload.single('image'), blogController.updateBlog);
+router.put('/:id', auth, upload.single('image'), blogController.updateBlog);
 
 // Delete a blog by ID
-router.delete('/:id', blogController.deleteBlog);
+router.delete('/:id', auth, blogController.deleteBlog);
 
 module.exports = router;
 

@@ -40,7 +40,18 @@ exports.loginUser = async (req, res) => {
 //update user password
 exports.updateUser = async (req, res) => {
   try {
-    const { password } = req.body;
+    // const username = req.body.username;
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    if (oldPassword === newPassword) {
+      return res.status(400).json({ error: "New password cannot be the same as old password" });
+    }
+    //check if old password is correct
+    const correctPassword = await User.findOne({ _id: req.params.id, password: oldPassword });
+    if (!correctPassword) {
+      return res.status(404).json({ error: "Invalid password" });
+    }
+    const password = newPassword;
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       { password },
