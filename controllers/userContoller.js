@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const jwt = require("jsonwebtoken");
 
 // Create a new user
 exports.createUser = async (req, res) => {
@@ -31,7 +32,14 @@ exports.loginUser = async (req, res) => {
     if (!correctPassword) {
       return res.status(404).json({ error: "Invalid password" });
     }
-    res.status(200).json(correctPassword);
+    //create and assign a token
+    const token = jwt.sign(
+      { _id: correctPassword._id },
+      process.env.TOKEN_SECRET
+    );
+    res.header("auth-token", token).json({ token });
+    // send token and user details to client
+    res.json({ token: token, user: correctPassword });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -44,10 +52,15 @@ exports.updateUser = async (req, res) => {
     const oldPassword = req.body.oldPassword;
     const newPassword = req.body.newPassword;
     if (oldPassword === newPassword) {
-      return res.status(400).json({ error: "New password cannot be the same as old password" });
+      return res
+        .status(400)
+        .json({ error: "New password cannot be the same as old password" });
     }
     //check if old password is correct
-    const correctPassword = await User.findOne({ _id: req.params.id, password: oldPassword });
+    const correctPassword = await User.findOne({
+      _id: req.params.id,
+      password: oldPassword,
+    });
     if (!correctPassword) {
       return res.status(404).json({ error: "Invalid password" });
     }
