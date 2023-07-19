@@ -22,24 +22,24 @@ exports.loginUser = async (req, res) => {
   try {
     const username = req.body.username;
     const password = req.body.password;
-    //check if username exists
-    const userExists = await User.findOne({ username });
-    if (!userExists) {
+    console.log(username + " " + password);
+    const user = await User.findOne({ username });
+    if (!user) {
       return res.status(404).json({ error: "Invalid username" });
     }
-    //check if password is correct
-    const correctPassword = await User.findOne({ username, password });
-    if (!correctPassword) {
+    if (user.password !== password) {
       return res.status(404).json({ error: "Invalid password" });
     }
-    //create and assign a token
-    const token = jwt.sign(
-      { _id: correctPassword._id },
-      process.env.TOKEN_SECRET
-    );
-    res.header("auth-token", token).json({ token });
-    // send token and user details to client
-    res.json({ token: token, user: correctPassword });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    res.status(200).header("auth-token", token).json({
+      message: "Login successful",
+      token,
+      user: {
+        _id: user._id,
+        username: user.username,
+        token: token,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -70,7 +70,7 @@ exports.updateUser = async (req, res) => {
       { password },
       { new: true }
     );
-    res.json(updatedUser);
+    res.status(200).json(updatedUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -80,7 +80,7 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
-    res.json(deletedUser);
+    res.status(200).json(deletedUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

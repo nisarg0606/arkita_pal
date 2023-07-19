@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const serviceController = require("../controllers/serviceController");
 const multer = require('multer');
+const auth = require("../middleware/auth");
 
 // Set up multer storage
 const storage = multer.diskStorage({
@@ -29,7 +30,7 @@ const upload = multer({
 });
 
 // Create a new service
-router.post('/', upload.single('image'), serviceController.createService);
+router.post('/', auth, upload.single('image'), serviceController.createService);
 
 // Get all services
 router.get('/', serviceController.getAllServices);
