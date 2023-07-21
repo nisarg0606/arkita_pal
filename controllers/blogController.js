@@ -65,8 +65,11 @@ exports.updateBlog = async (req, res) => {
       image = getBlog.image;
     }
 
-    if (image === getBlog.image) {  
-    console.log("image not updated from if Line 65");
+    // if getBlog.image is same as req.file.path then image is not updated
+    console.log("getBlog.image is " + getBlog.image);
+    console.log("req.file.path is " + req.file.path);
+    console.log("image is " + image);
+    if (getBlog.image === image) {
       image = null;
     }
 
@@ -81,7 +84,7 @@ exports.updateBlog = async (req, res) => {
       }
     }
     let updatedBlog;
-    console.log("image is " + image);
+    console.log("image is " + image + " after checking image type");
     if (!image) {
       updatedBlog = await Blog.findByIdAndUpdate(
         req.params.id,
