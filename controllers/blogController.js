@@ -64,6 +64,8 @@ exports.updateBlog = async (req, res) => {
       if (!req.file.mimetype.startsWith("image/")) {
         return res.status(400).json({ error: "Only image files are allowed" });
       }
+    }else{
+      console.log("No image uploaded");
     }
     blog.title = req.body.title;
     blog.content = req.body.content;
