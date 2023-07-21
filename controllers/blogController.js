@@ -95,11 +95,12 @@ exports.updateBlog = async (req, res) => {
         { new: true }
       );
     }
+    const savedBlog = await updatedBlog.save();
 
     if (!updatedBlog) {
       return res.status(404).json({ error: error.message });
     }
-    res.status(200).json(updatedBlog);
+    res.status(200).json(savedBlog);
   } catch (error) {
     if (error.message === "Only image files are allowed") {
       return res.status(400).json({ error: error.message });
