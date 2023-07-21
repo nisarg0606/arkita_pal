@@ -81,6 +81,7 @@ exports.updateBlog = async (req, res) => {
       }
     }
     let updatedBlog;
+    console.log("image is " + image);
     if (!image) {
       updatedBlog = await Blog.findByIdAndUpdate(
         req.params.id,
