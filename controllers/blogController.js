@@ -58,17 +58,13 @@ exports.updateBlog = async (req, res) => {
     }
     const title = req.body.title;
     const content = req.body.content;
-    // if image is updated then get the image path
-    const image = req.file ? req.file.path : null;
-    // if the image is not updated then don't update the image
-    if (getBlog.image === image) {
-      // don't update the image
+    let image = req.file ? req.file.path : null;
+    if (image === getBlog.image) {  
+    console.log("image not updated from if Line 65");
       image = null;
     }
 
-    // check the file type
-    const imgType = req.file ? req.file.mimetype : null;
-    // if image is not null then check the file type
+    let imgType = req.file ? req.file.mimetype : null;
     if (image) {
       if (
         imgType !== "image/jpeg" &&
@@ -79,15 +75,13 @@ exports.updateBlog = async (req, res) => {
       }
     }
     let updatedBlog;
-    // if image is not updated
     if (!image) {
       updatedBlog = await Blog.findByIdAndUpdate(
         req.params.id,
         { title, content },
         { new: true }
       );
-
-      // if image is updated
+        console.log("image not updated from if");
     } else {
       updatedBlog = await Blog.findByIdAndUpdate(
         req.params.id,
@@ -95,12 +89,11 @@ exports.updateBlog = async (req, res) => {
         { new: true }
       );
     }
-    const savedBlog = await updatedBlog.save();
 
     if (!updatedBlog) {
       return res.status(404).json({ error: error.message });
     }
-    res.status(200).json(savedBlog);
+    res.status(200).json(updatedBlog);
   } catch (error) {
     if (error.message === "Only image files are allowed") {
       return res.status(400).json({ error: error.message });
