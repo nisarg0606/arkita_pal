@@ -52,14 +52,31 @@ exports.getBlogById = async (req, res) => {
 // Update a blog by ID
 exports.updateBlog = async (req, res) => {
   try {
+    const getBlog = await Blog.findById(req.params.id);
+    if (!getBlog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
     const title = req.body.title;
     const content = req.body.content;
-    const image = req.file.path;
+    // if image is updated then get the image path
+    const image = req.file ? req.file.path : null;
+    // if the image is not updated then don't update the image
+    if (getBlog.image === image) {
+      // don't update the image
+      image = null;
+    }
 
     // check the file type
-    const imgType = req.file.mimetype;
-    if (imgType !== "image/jpeg" && imgType !== "image/png") {
-      res.status(400).json({ error: "Only image files are allowed" });
+    const imgType = req.file ? req.file.mimetype : null;
+    // if image is not null then check the file type
+    if (image) {
+      if (
+        imgType !== "image/jpeg" &&
+        imgType !== "image/jpg" &&
+        imgType !== "image/png"
+      ) {
+        res.status(400).json({ error: "Only image files are allowed" });
+      }
     }
     let updatedBlog;
     // if image is not updated
