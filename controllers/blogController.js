@@ -52,62 +52,24 @@ exports.getBlogById = async (req, res) => {
 // Update a blog by ID
 exports.updateBlog = async (req, res) => {
   try {
-    const getBlog = await Blog.findById(req.params.id);
-    if (!getBlog) {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
-    const title = req.body.title;
-    const content = req.body.content;
-    let image = req.file ? req.file.path : null;
-
-    if(image == null) {
-      console.log("image was not uploaded");
-      image = getBlog.image;
-    }
-
-    // if getBlog.image is same as req.file.path then image is not updated
-    console.log("getBlog.image is " + getBlog.image);
-    console.log("req.file.path is " + req.file.path);
-    console.log("image is " + image);
-    if (getBlog.image === image) {
-      image = null;
-    }
-
-    let imgType = req.file ? req.file.mimetype : null;
-    if (image) {
-      if (
-        imgType !== "image/jpeg" &&
-        imgType !== "image/jpg" &&
-        imgType !== "image/png"
-      ) {
-        res.status(400).json({ error: "Only image files are allowed" });
+    // if image is updated then upload the new image
+    if (req.file) {
+      blog.image = req.file.path;
+      blog.imgType = req.file.mimetype;
+      // if mimetype is not image then return error
+      if (!req.file.mimetype.startsWith("image/")) {
+        return res.status(400).json({ error: "Only image files are allowed" });
       }
     }
-    let updatedBlog;
-    console.log("image is " + image + " after checking image type");
-    if (!image) {
-      updatedBlog = await Blog.findByIdAndUpdate(
-        req.params.id,
-        { title, content },
-        { new: true }
-      );
-        console.log("image not updated from if");
-    } else {
-      updatedBlog = await Blog.findByIdAndUpdate(
-        req.params.id,
-        { title, content, image, imgType },
-        { new: true }
-      );
-    }
-
-    if (!updatedBlog) {
-      return res.status(404).json({ error: error.message });
-    }
+    blog.title = req.body.title;
+    blog.content = req.body.content;
+    const updatedBlog = await blog.save();
     res.status(200).json(updatedBlog);
   } catch (error) {
-    if (error.message === "Only image files are allowed") {
-      return res.status(400).json({ error: error.message });
-    }
     res.status(500).json({ error: error.message });
   }
 };
