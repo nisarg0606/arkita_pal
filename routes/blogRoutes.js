@@ -38,7 +38,7 @@ router.get('/', blogController.getAllBlogs);
 // Get a single blog by ID
 router.get('/:id', blogController.getBlogById);
 
-// Update a blog by ID
+// Update a blog by ID if Image is updated then upload the new image 
 router.put('/:id', auth, upload.single('image'), blogController.updateBlog);
 
 // Delete a blog by ID
