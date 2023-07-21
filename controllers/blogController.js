@@ -59,6 +59,12 @@ exports.updateBlog = async (req, res) => {
     const title = req.body.title;
     const content = req.body.content;
     let image = req.file ? req.file.path : null;
+
+    if(image == null) {
+      console.log("image was not uploaded");
+      image = getBlog.image;
+    }
+
     if (image === getBlog.image) {  
     console.log("image not updated from if Line 65");
       image = null;
