@@ -1,21 +1,20 @@
 const moongoose = require("mongoose");
-
-const gallerySchema = new moongoose.Schema({
-    image: {
+const category = require("./categoryModel");
+const questionSchema = new moongoose.Schema({
+    category: {
+        type: moongoose.Schema.Types.ObjectId,
+        ref: "Category",
+        required: true,
+    },
+    question: {
         type: String,
         required: true,
         unique: false,
         trim: true,
     },
-    imgType: {
+    answer: {
         type: String,
         required: true,
-        unique: false,
-        trim: true,
-    },
-    alt: {
-        type: String,
-        // required: true,
         unique: false,
         trim: true,
     },
@@ -25,4 +24,4 @@ const gallerySchema = new moongoose.Schema({
     },
 });
 
-module.exports = moongoose.model("Gallery", gallerySchema);
+module.exports = moongoose.model("Question", questionSchema);

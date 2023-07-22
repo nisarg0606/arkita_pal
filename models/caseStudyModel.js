@@ -1,23 +1,29 @@
 const moongoose = require("mongoose");
 
-const gallerySchema = new moongoose.Schema({
+const caseStudySchema = new moongoose.Schema({
     image: {
         type: String,
         required: true,
         unique: false,
-        trim: true,
     },
     imgType: {
         type: String,
         required: true,
         unique: false,
-        trim: true,
     },
     alt: {
         type: String,
-        // required: true,
         unique: false,
-        trim: true,
+    },
+    title: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+    content: {
+        type: String,
+        required: true,
+        unique: false,
     },
     createdAt: {
         type: Date,
@@ -25,4 +31,4 @@ const gallerySchema = new moongoose.Schema({
     },
 });
 
-module.exports = moongoose.model("Gallery", gallerySchema);
+module.exports = moongoose.model("CaseStudy", caseStudySchema);
